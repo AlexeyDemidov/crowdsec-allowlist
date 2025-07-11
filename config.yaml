@@ -1,0 +1,6 @@
+---
+db_config:
+  host: localhost
+  db_name: crowdsec
+  user: crowdsec
+  password: password

@@ -1,0 +1,31 @@
+[tools]
+pre-commit = "latest"
+python = "3.11.2"
+ruff = "latest"
+uv = "latest"
+
+[settings]
+python.uv_venv_auto = true
+
+[tasks.format]
+run = "ruff format crowdsec_allowlist.py"
+
+[tasks.lint]
+run = "ruff check crowdsec_allowlist.py"
+
+[tasks.run]
+run = "./crowdsec_allowlist.py -v DEBUG -c config.yaml -l default 01-local-whitelist.yaml 02-cloudfront-whitelist.yaml"
+
+[tasks.install]
+run = "uv sync --active --script crowdsec_allowlist.py"
+
+[tasks.mysql]
+description = "Start MariaDB docker"
+run = "docker compose up -d"
+
+[tasks.mysqlcli]
+description = "Connect to MySQL CLI"
+run = "docker exec -it dev_mariadb mysql -u crowdsec -p crowdsec"
+
+[tasks.pre-commit]
+run = "pre-commit run"

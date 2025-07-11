@@ -1,0 +1,19 @@
+---
+services:
+  mariadb:
+    image: mariadb:10.11.11  # the version currently in Debian 12
+    container_name: dev_mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: crowdsec
+      MYSQL_USER: crowdsec
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      # Optional: initialization scripts
+      # - ./init-scripts:/docker-entrypoint-initdb.d
+      - crowdsec_db_data:/var/lib/mysql
+      - ./crowdsec-dump.sql:/docker-entrypoint-initdb.d/dump.sql
+volumes:
+  crowdsec_db_data:

@@ -1,0 +1,7 @@
+---
+name: localusers/whitelist
+description: "Whitelist events from users IPs"
+whitelist:
+  reason: "users IPs"
+  cidr:
+    - 10.0.0.1/8
