@@ -1,4 +1,5 @@
 [tools]
+"gem:mdl" = "latest"
 "pipx:commitizen" = "latest"
 pre-commit = "latest"
 python = "3.11.2"

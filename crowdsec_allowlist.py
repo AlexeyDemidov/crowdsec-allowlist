@@ -190,20 +190,20 @@ def update_allowlist(allow_list_id, cidrs, db_config, expire_delta=86400):
     "-c",
     default="/etc/crowdsec/config.yaml",
     type=click.Path(exists=True),
-    help="Path to the CrowdSec configuration file",
+    help="Path to the CrowdSec configuration file with the DB connection details (default: /etc/crowdsec/config.yaml)",
 )
 @click.option(
     "--allowlist-name",
     "-l",
     required=True,
-    help="Name of the allow list to import into",
+    help="Name of the allowlist to import into",
 )
 @click.option(
     "--expire",
     "-e",
     required=False,
     default="24h",
-    help="Expiration time for the allow list items (default: 24 hours from now)",
+    help="Expiration time for the allow list items (default: 24h)",
 )
 @click_log.simple_verbosity_option(logger)
 def import_allowlist(crowdsec_config, whitelist_yaml, allowlist_name, expire):

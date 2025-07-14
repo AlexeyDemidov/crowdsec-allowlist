@@ -53,6 +53,12 @@ repos:
       - id: commitizen
       - id: commitizen-branch
         stages: [pre-push]
+  - repo: https://github.com/amperser/proselint.git
+    rev: 0.14.0
+    hooks:
+      - id: proselint
+        types: [plain-text]
+        exclude: LICENSE
 # - repo: https://github.com/compilerla/conventional-pre-commit
 #   rev: v4.2.0
 #   hooks:
