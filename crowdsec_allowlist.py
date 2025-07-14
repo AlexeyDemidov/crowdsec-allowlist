@@ -5,6 +5,9 @@
 # dependencies = [
 #     "click",
 #     "click-log",
+#     "durationpy",
+#     "ipaddress",
+#     "logging",
 #     "mysql-connector-python",
 #     "PyYAML"
 # ]
@@ -13,6 +16,7 @@
 import click
 import click_log
 import datetime
+import durationpy
 import ipaddress
 import logging
 import mysql.connector
@@ -104,13 +108,13 @@ def get_allow_list_id(db_config, name):
 
 
 @click_log.simple_verbosity_option(logger)
-def update_allowlist(allow_list_id, cidrs, db_config):
+def update_allowlist(allow_list_id, cidrs, db_config, expire_delta=86400):
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
 
     # now = datetime.datetime.utcnow()  # FIXME
     now = datetime.datetime.now(datetime.timezone.utc)
-    expires_at = now + datetime.timedelta(hours=24)
+    expires_at = now + expire_delta
 
     select_sql = "SELECT id FROM allow_list_items WHERE value=%s LIMIT 1"
     insert_sql = """
@@ -194,8 +198,15 @@ def update_allowlist(allow_list_id, cidrs, db_config):
     required=True,
     help="Name of the allow list to import into",
 )
+@click.option(
+    "--expire",
+    "-e",
+    required=False,
+    default="24h",
+    help="Expiration time for the allow list items (default: 24 hours from now)",
+)
 @click_log.simple_verbosity_option(logger)
-def import_allowlist(crowdsec_config, whitelist_yaml, allowlist_name):
+def import_allowlist(crowdsec_config, whitelist_yaml, allowlist_name, expire):
     crowdsec_config_data = load_crowdsec_config(crowdsec_config)
 
     db_config = {
@@ -206,11 +217,12 @@ def import_allowlist(crowdsec_config, whitelist_yaml, allowlist_name):
     }
 
     allow_list_id = get_allow_list_id(db_config, allowlist_name)
+    expire_delta = durationpy.from_str(expire)
 
     for yaml_path in whitelist_yaml:
         logger.info(f"Importing allowlist from {yaml_path}...")
         cidrs = load_whitelist_cidrs(yaml_path)
-        update_allowlist(allow_list_id, cidrs, db_config)
+        update_allowlist(allow_list_id, cidrs, db_config, expire_delta)
 
 
 if __name__ == "__main__":
